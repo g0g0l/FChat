@@ -1,5 +1,4 @@
 # FChat
-Simple one-to-one chat app for Android
 This is a simple real time one-to-one chat app for android using firebase database. Users can login using their google accounts and have conversations with other registered members.
 
 ![ScreenShot](https://raw.github.com/g0g0l/FChat/master/screenshots/screenshot_1.png)
@@ -12,3 +11,5 @@ Before you use:
 2. Enable google login for firebase in your firebase project (more http://www.androidhive.info/2016/06/android-getting-started-firebase-simple-login-registration-auth/)
 
 For reference, see https://codelabs.developers.google.com/codelabs/firebase-android/#0
+
+I have provided my google-services.json which is for testing purpose only. DO NOT USE IT IN YOUR OWN PROJECT
