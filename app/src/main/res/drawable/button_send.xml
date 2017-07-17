@@ -1,0 +1,39 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- On pressed -->
+    <item android:state_focused="false" android:state_pressed="true" >
+        <layer-list>
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="@color/grey_hard"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!-- On disable -->
+    <item android:state_enabled="false" >
+        <layer-list>
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="@color/colorPrimary"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!-- On normal -->
+    <item android:state_focused="false" android:state_pressed="false" >
+        <layer-list>
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="@color/colorPrimary"/>
+                </shape>
+            </item>
+            <item>
+                <bitmap android:src="@drawable/ic_send" > </bitmap>
+            </item>
+        </layer-list>
+    </item>
+
+</selector>

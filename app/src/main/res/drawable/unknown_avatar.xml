@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/grey_medium"/>
+            <stroke android:color="@color/grey_medium" android:width="0px"/>
+        </shape>
+    </item>
+    <item>
+        <bitmap android:src="@drawable/ic_people">
+
+        </bitmap>
+    </item>
+</layer-list>
+

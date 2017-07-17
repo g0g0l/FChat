@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">FChat</string>
+
+    <!--exit notification-->
+    <string name="press_again_exit_app">Press again to exit</string>
+
+    <string name="settings_file_name">com.app.sample.fchat.temp</string>
+
+</resources>
