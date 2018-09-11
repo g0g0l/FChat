@@ -25,4 +25,9 @@
     <color name="grey_text">#222D31</color>
     <color name="me_chat_bg">#FFE0B2</color>
 
+    <color name="warning">#ff9933</color>
+    <color name="error">#8b0000</color>
+    <color name="info">#000080</color>
+    <color name="success">#008000</color>
+
 </resources>

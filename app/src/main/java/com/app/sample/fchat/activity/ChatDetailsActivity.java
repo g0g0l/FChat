@@ -1,4 +1,4 @@
-package com.app.sample.fchat;
+package com.app.sample.fchat.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.app.sample.fchat.R;
 import com.app.sample.fchat.adapter.ChatDetailsListAdapter;
 import com.app.sample.fchat.data.ParseFirebaseData;
 import com.app.sample.fchat.data.SettingsAPI;
@@ -36,12 +37,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ActivityChatDetails extends AppCompatActivity {
+public class ChatDetailsActivity extends AppCompatActivity {
     public static String KEY_FRIEND = "FRIEND";
 
     // give preparation animation activity transition
     public static void navigate(AppCompatActivity activity, View transitionImage, Friend obj) {
-        Intent intent = new Intent(activity, ActivityChatDetails.class);
+        Intent intent = new Intent(activity, ChatDetailsActivity.class);
         intent.putExtra(KEY_FRIEND, obj);
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, transitionImage, KEY_FRIEND);
         ActivityCompat.startActivity(activity, intent, options.toBundle());
@@ -98,7 +99,7 @@ public class ActivityChatDetails extends AppCompatActivity {
                 String totalData = dataSnapshot.child(chatNode).toString();
                 items.clear();
                 items.addAll(pfbd.getMessageListForUser(totalData));
-                mAdapter = new ChatDetailsListAdapter(ActivityChatDetails.this, items);
+                mAdapter = new ChatDetailsListAdapter(ChatDetailsActivity.this, items);
                 listview.setAdapter(mAdapter);
                 listview.setSelectionFromTop(mAdapter.getCount(), 0);
                 listview.requestFocus();

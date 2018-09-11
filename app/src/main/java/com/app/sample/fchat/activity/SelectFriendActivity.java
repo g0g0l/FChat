@@ -1,4 +1,4 @@
-package com.app.sample.fchat;
+package com.app.sample.fchat.activity;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -7,18 +7,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 
-import com.app.sample.fchat.adapter.ChatsListAdapter;
+import com.app.sample.fchat.R;
 import com.app.sample.fchat.adapter.FriendsListAdapter;
 import com.app.sample.fchat.data.ParseFirebaseData;
 import com.app.sample.fchat.data.Tools;
-import com.app.sample.fchat.model.ChatMessage;
 import com.app.sample.fchat.model.Friend;
 import com.app.sample.fchat.widget.DividerItemDecoration;
 import com.google.firebase.database.DataSnapshot;
@@ -30,7 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivitySelectFriend extends AppCompatActivity {
+public class SelectFriendActivity extends AppCompatActivity {
 
     private ActionBar actionBar;
     private RecyclerView recyclerView;
@@ -55,13 +50,13 @@ public class ActivitySelectFriend extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String totalData = dataSnapshot.getValue().toString();
                 // TODO: 25-05-2017 if number of items is 0 then show something else
-                mAdapter = new FriendsListAdapter(ActivitySelectFriend.this, pfbd.getUserList(totalData));
+                mAdapter = new FriendsListAdapter(SelectFriendActivity.this, pfbd.getUserList(totalData));
                 recyclerView.setAdapter(mAdapter);
 
                 mAdapter.setOnItemClickListener(new FriendsListAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, Friend obj, int position) {
-                        ActivityChatDetails.navigate((ActivitySelectFriend) ActivitySelectFriend.this, findViewById(R.id.lyt_parent), obj);
+                        ChatDetailsActivity.navigate((SelectFriendActivity) SelectFriendActivity.this, findViewById(R.id.lyt_parent), obj);
                     }
                 });
 

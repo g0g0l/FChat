@@ -1,4 +1,4 @@
-package com.app.sample.fchat;
+package com.app.sample.fchat.activity;
 
 import android.content.Intent;
 import android.os.Build;
@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -14,8 +13,10 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.app.sample.fchat.R;
 import com.app.sample.fchat.data.SettingsAPI;
 import com.app.sample.fchat.data.Tools;
+import com.app.sample.fchat.util.CustomToast;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -35,7 +36,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class ActivitySplash extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
+public class SplashActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
 
     private static final int RC_SIGN_IN = 100;
@@ -47,6 +48,8 @@ public class ActivitySplash extends AppCompatActivity implements GoogleApiClient
     DatabaseReference ref;
     SettingsAPI set;
 
+    CustomToast customToast;
+
     public static final String USERS_CHILD = "users";
 
     @Override
@@ -54,6 +57,8 @@ public class ActivitySplash extends AppCompatActivity implements GoogleApiClient
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         bindLogo();
+
+        customToast = new CustomToast(this);
 
         // Assign fields
         signInButton = (SignInButton) findViewById(R.id.sign_in_button);
@@ -100,7 +105,7 @@ public class ActivitySplash extends AppCompatActivity implements GoogleApiClient
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        startActivity(new Intent(ActivitySplash.this, ActivityMain.class));
+                        startActivity(new Intent(SplashActivity.this, MainActivity.class));
                         finish();
                     }
                 }, 3000);
@@ -185,7 +190,7 @@ public class ActivitySplash extends AppCompatActivity implements GoogleApiClient
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
-                Snackbar.make(getWindow().getDecorView(), "Login failed", Snackbar.LENGTH_LONG).show();
+                customToast.showError("Login failed");
             }
         }
     }
@@ -200,9 +205,9 @@ public class ActivitySplash extends AppCompatActivity implements GoogleApiClient
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Snackbar.make(getWindow().getDecorView(), "Authentication failed.", Snackbar.LENGTH_LONG).show();
+                            customToast.showError("Authentication failed.");
                         } else {
-                            ref=FirebaseDatabase.getInstance().getReference(USERS_CHILD);
+                            ref = FirebaseDatabase.getInstance().getReference(USERS_CHILD);
                             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot snapshot) {
@@ -226,7 +231,7 @@ public class ActivitySplash extends AppCompatActivity implements GoogleApiClient
                                 }
                             });
 
-                            startActivity(new Intent(ActivitySplash.this, ActivityMain.class));
+                            startActivity(new Intent(SplashActivity.this, MainActivity.class));
                             finish();
                         }
                     }
@@ -237,6 +242,6 @@ public class ActivitySplash extends AppCompatActivity implements GoogleApiClient
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
-        Snackbar.make(getWindow().getDecorView(), "Google Play Services error.", Snackbar.LENGTH_LONG).show();
+        customToast.showError("Google Play Services error.");
     }
 }

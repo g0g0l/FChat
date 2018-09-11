@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.app.sample.fchat.ActivityChatDetails;
-import com.app.sample.fchat.ActivityMain;
+import com.app.sample.fchat.activity.ChatDetailsActivity;
+import com.app.sample.fchat.activity.MainActivity;
 import com.app.sample.fchat.R;
 import com.app.sample.fchat.adapter.ChatsListAdapter;
 import com.app.sample.fchat.data.ParseFirebaseData;
@@ -75,9 +75,9 @@ public class ChatsFragment extends Fragment {
                     @Override
                     public void onItemClick(View v, ChatMessage obj, int position) {
                         if (obj.getReceiver().getId().equals(set.readSetting("myid")))
-                            ActivityChatDetails.navigate((ActivityMain) getActivity(), v.findViewById(R.id.lyt_parent), obj.getSender());
+                            ChatDetailsActivity.navigate((MainActivity) getActivity(), v.findViewById(R.id.lyt_parent), obj.getSender());
                         else if (obj.getSender().getId().equals(set.readSetting("myid")))
-                            ActivityChatDetails.navigate((ActivityMain) getActivity(), v.findViewById(R.id.lyt_parent), obj.getReceiver());
+                            ChatDetailsActivity.navigate((MainActivity) getActivity(), v.findViewById(R.id.lyt_parent), obj.getReceiver());
                     }
                 });
 
