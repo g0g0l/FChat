@@ -48,9 +48,8 @@ public class SelectFriendActivity extends AppCompatActivity {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String totalData = dataSnapshot.getValue().toString();
                 // TODO: 25-05-2017 if number of items is 0 then show something else
-                mAdapter = new FriendsListAdapter(SelectFriendActivity.this, pfbd.getUserList(totalData));
+                mAdapter = new FriendsListAdapter(SelectFriendActivity.this, pfbd.getAllUser(dataSnapshot));
                 recyclerView.setAdapter(mAdapter);
 
                 mAdapter.setOnItemClickListener(new FriendsListAdapter.OnItemClickListener() {

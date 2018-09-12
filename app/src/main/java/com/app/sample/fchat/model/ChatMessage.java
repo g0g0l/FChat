@@ -27,8 +27,9 @@ public class ChatMessage {
     private String senderName;
     private String senderPhoto;
     private String timestamp;
+    private Boolean isRead;
 
-    public ChatMessage(String text, String timestamp,String friendId, String friendName,String friendPhoto,String senderId,String senderName,String senderPhoto) {
+    public ChatMessage(String text, String timestamp, String friendId, String friendName, String friendPhoto, String senderId, String senderName, String senderPhoto, Boolean isRead) {
         this.text = text;
         this.timestamp = timestamp;
         this.friendId=friendId;
@@ -37,6 +38,7 @@ public class ChatMessage {
         this.senderId=senderId;
         this.senderName=senderName;
         this.senderPhoto=senderPhoto;
+        this.isRead = isRead;
     }
 
     public String getText() {
@@ -47,12 +49,73 @@ public class ChatMessage {
         this.text = text;
     }
 
+    public String getFriendId() {
+        return friendId;
+    }
+
+    public void setFriendId(String friendId) {
+        this.friendId = friendId;
+    }
+
+    public String getFriendName() {
+        return friendName;
+    }
+
+    public void setFriendName(String friendName) {
+        this.friendName = friendName;
+    }
+
+    public String getFriendPhoto() {
+        return friendPhoto;
+    }
+
+    public void setFriendPhoto(String friendPhoto) {
+        this.friendPhoto = friendPhoto;
+    }
+
+    public String getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getSenderPhoto() {
+        return senderPhoto;
+    }
+
+    public void setSenderPhoto(String senderPhoto) {
+        this.senderPhoto = senderPhoto;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(Boolean read) {
+        isRead = read;
+    }
+
     public String getReadableTime()
     {
         try {
             return Tools.formatTime(Long.valueOf(timestamp));
         }
         catch (NumberFormatException ignored) {
+
             return null;
         }
     }
@@ -73,4 +136,6 @@ public class ChatMessage {
     {
         return Long.parseLong(timestamp);
     }
+
+
 }

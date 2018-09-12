@@ -68,7 +68,7 @@ public class ChatsFragment extends Fragment {
                 if (dataSnapshot.getValue() != null)
                     totalData = dataSnapshot.getValue().toString();
                 // TODO: 25-05-2017 if number of items is 0 then show something else
-                mAdapter = new ChatsListAdapter(getContext(), pfbd.getLastMessageList(totalData));
+                mAdapter = new ChatsListAdapter(getContext(), pfbd.getAllLastMessages(dataSnapshot));
                 recyclerView.setAdapter(mAdapter);
 
                 mAdapter.setOnItemClickListener(new ChatsListAdapter.OnItemClickListener() {

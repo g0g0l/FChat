@@ -58,6 +58,7 @@ public class ChatsListAdapter extends RecyclerView.Adapter<ChatsListAdapter.View
         public TextView content;
         public ImageView image;
         public LinearLayout lyt_parent;
+        public LinearLayout unreadDot;
 
         public ViewHolder(View v) {
             super(v);
@@ -65,6 +66,7 @@ public class ChatsListAdapter extends RecyclerView.Adapter<ChatsListAdapter.View
             content = (TextView) v.findViewById(R.id.content);
             image = (ImageView) v.findViewById(R.id.image);
             lyt_parent = (LinearLayout) v.findViewById(R.id.lyt_parent);
+            unreadDot = (LinearLayout) v.findViewById(R.id.unread);
         }
 
     }
@@ -93,15 +95,18 @@ public class ChatsListAdapter extends RecyclerView.Adapter<ChatsListAdapter.View
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        set=new SettingsAPI(mContext);
+        set = new SettingsAPI(mContext);
         final ChatMessage c = filtered_items.get(position);
+        if (filtered_items.get(position).getReceiver().getId().equals(set.readSetting("myid"))
+                && !filtered_items.get(position).isRead())
+            holder.unreadDot.setVisibility(View.VISIBLE);
+        else
+            holder.unreadDot.setVisibility(View.INVISIBLE);
         holder.content.setText(c.getText());
         if (c.getSender().getId().equals(set.readSetting("myid"))) {
             holder.title.setText(c.getReceiver().getName());
             Picasso.with(mContext).load(c.getReceiver().getPhoto()).resize(100, 100).transform(new CircleTransform()).into(holder.image);
-        }
-        else if(c.getReceiver().getId().equals(set.readSetting("myid")))
-        {
+        } else if (c.getReceiver().getId().equals(set.readSetting("myid"))) {
             holder.title.setText(c.getSender().getName());
             Picasso.with(mContext).load(c.getSender().getPhoto()).resize(100, 100).transform(new CircleTransform()).into(holder.image);
         }
@@ -135,6 +140,7 @@ public class ChatsListAdapter extends RecyclerView.Adapter<ChatsListAdapter.View
      * Here is the key method to apply the animation
      */
     private int lastPosition = -1;
+
     private void setAnimation(View viewToAnimate, int position) {
         // If the bound view wasn't previously displayed on screen, it's animated
         if (position > lastPosition) {
@@ -161,7 +167,7 @@ public class ChatsListAdapter extends RecyclerView.Adapter<ChatsListAdapter.View
         notifyDataSetChanged();
     }
 
-    public void removeSelectedItem(){
+    public void removeSelectedItem() {
         List<ChatMessage> items = getSelectedItems();
         filtered_items.removeAll(items);
     }
@@ -193,6 +199,8 @@ public class ChatsListAdapter extends RecyclerView.Adapter<ChatsListAdapter.View
         return 0;
     }
 
+    //Original list contains all the last messages from all chats
+    //We need only those messages where this particular user is involved
     private class ItemFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {

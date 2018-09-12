@@ -36,6 +36,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import static com.app.sample.fchat.util.Constants.NODE_ID;
+import static com.app.sample.fchat.util.Constants.NODE_NAME;
+import static com.app.sample.fchat.util.Constants.NODE_PHOTO;
+
 public class SplashActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
 
@@ -220,9 +224,9 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
                                     set.addUpdateSettings("mydp", usrDp);
 
                                     if (!snapshot.hasChild(usrId)) {
-                                        ref.child(usrId + "/name").setValue(usrNm);
-                                        ref.child(usrId + "/photo").setValue(usrDp);
-                                        ref.child(usrId + "/id").setValue(usrId);
+                                        ref.child(usrId + "/" + NODE_NAME).setValue(usrNm);
+                                        ref.child(usrId + "/" + NODE_PHOTO).setValue(usrDp);
+                                        ref.child(usrId + "/" + NODE_ID).setValue(usrId);
                                     }
                                 }
 
