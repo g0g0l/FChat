@@ -11,9 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.app.sample.fchat.R;
 import com.app.sample.fchat.activity.ChatDetailsActivity;
 import com.app.sample.fchat.activity.MainActivity;
-import com.app.sample.fchat.R;
 import com.app.sample.fchat.adapter.ChatsListAdapter;
 import com.app.sample.fchat.data.ParseFirebaseData;
 import com.app.sample.fchat.data.SettingsAPI;
@@ -64,9 +64,7 @@ public class ChatsFragment extends Fragment {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String totalData = "";
                 if (dataSnapshot.getValue() != null)
-                    totalData = dataSnapshot.getValue().toString();
                 // TODO: 25-05-2017 if number of items is 0 then show something else
                 mAdapter = new ChatsListAdapter(getContext(), pfbd.getAllLastMessages(dataSnapshot));
                 recyclerView.setAdapter(mAdapter);

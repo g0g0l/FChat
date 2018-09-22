@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -30,7 +29,6 @@ import com.app.sample.fchat.data.SettingsAPI;
 import com.app.sample.fchat.data.Tools;
 import com.app.sample.fchat.model.ChatMessage;
 import com.app.sample.fchat.model.Friend;
-import com.app.sample.fchat.util.Constants;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -138,6 +136,8 @@ public class ChatDetailsActivity extends AppCompatActivity {
                     }
                 }
 
+                // TODO: 12/09/18 Change it to recyclerview 
+                // TODO: 12/09/18 scroll to bottom
                 mAdapter = new ChatDetailsListAdapter(ChatDetailsActivity.this, items);
                 listview.setAdapter(mAdapter);
                 listview.setSelectionFromTop(mAdapter.getCount(), 0);
