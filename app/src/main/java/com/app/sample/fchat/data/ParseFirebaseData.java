@@ -112,6 +112,45 @@ public class ParseFirebaseData {
         return lastChats;
     }
 
+    public List<ChatMessage> getAllUnreadReceivedMessages(DataSnapshot dataSnapshot) {
+        List<ChatMessage> lastChats = new ArrayList<>();
+        List<ChatMessage> tempMsgList;
+        long lastTimeStamp;
+        String text = null, msgTime = null, senderId = null, senderName = null, senderPhoto = null, receiverId = null, receiverName = null, receiverPhoto = null;
+        Boolean read = Boolean.TRUE;
+        for (DataSnapshot wholeChatData : dataSnapshot.getChildren()) {
+
+            tempMsgList = new ArrayList<>();
+            lastTimeStamp = 0;
+
+            for (DataSnapshot data : wholeChatData.getChildren()) {
+                msgTime = data.child(NODE_TIMESTAMP).getValue().toString();
+                if (Long.parseLong(msgTime) > lastTimeStamp)
+                    lastTimeStamp = Long.parseLong(msgTime);
+                text = data.child(NODE_TEXT).getValue().toString();
+                senderId = data.child(NODE_SENDER_ID).getValue().toString();
+                senderName = data.child(NODE_SENDER_NAME).getValue().toString();
+                senderPhoto = data.child(NODE_SENDER_PHOTO).getValue().toString();
+                receiverId = data.child(NODE_RECEIVER_ID).getValue().toString();
+                receiverName = data.child(NODE_RECEIVER_NAME).getValue().toString();
+                receiverPhoto = data.child(NODE_RECEIVER_PHOTO).getValue().toString();
+                //Node isRead is added later, may be null
+                read = data.child(NODE_IS_READ).getValue() == null || Boolean.parseBoolean(data.child(NODE_IS_READ).getValue().toString());
+
+                tempMsgList.add(new ChatMessage(text, msgTime, receiverId, receiverName, receiverPhoto, senderId, senderName, senderPhoto, read));
+            }
+
+            for (ChatMessage oneTemp : tempMsgList) {
+                if ((set.readSetting("myid").equals(oneTemp.getReceiver().getId()))) {
+                    if (oneTemp.getTimestamp().equals(String.valueOf(lastTimeStamp)) && !oneTemp.isRead()) {
+                        lastChats.add(oneTemp);
+                    }
+                }
+            }
+        }
+        return lastChats;
+    }
+
     private String encodeText(String msg) {
         return msg.replace(",", "#comma#").replace("{", "#braceopen#").replace("}", "#braceclose#").replace("=", "#equals#");
     }

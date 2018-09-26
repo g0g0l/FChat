@@ -21,18 +21,14 @@ public class Tools {
 
         Float f = null;
         try {
-            StringBuilder strBuild = new StringBuilder();
-            strBuild.append(android.os.Build.VERSION.RELEASE.substring(0, 2));
-            f = new Float(strBuild.toString());
-        } catch (NumberFormatException e) {
-            Log.e("", "erro ao recuperar a versão da API" + e.getMessage());
-        }
+            f = Float.valueOf(Build.VERSION.RELEASE.substring(0, 2));
+        } catch (NumberFormatException e) { }
 
         return f.floatValue();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public static void systemBarLolipop(Activity act){
+    public static void systemBarLolipop(Activity act) {
         if (getAPIVerison() >= 5.0) {
             Window window = act.getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -41,7 +37,7 @@ public class Tools {
         }
     }
 
-    public static String formatTime(long time){
+    public static String formatTime(long time) {
         // income time
         Calendar date = Calendar.getInstance();
         date.setTimeInMillis(time);
@@ -51,15 +47,13 @@ public class Tools {
         curDate.setTimeInMillis(System.currentTimeMillis());
 
         SimpleDateFormat dateFormat = null;
-        if(date.get(Calendar.YEAR)==curDate.get(Calendar.YEAR)){
-            if(date.get(Calendar.DAY_OF_YEAR) == curDate.get(Calendar.DAY_OF_YEAR) ){
+        if (date.get(Calendar.YEAR) == curDate.get(Calendar.YEAR)) {
+            if (date.get(Calendar.DAY_OF_YEAR) == curDate.get(Calendar.DAY_OF_YEAR)) {
                 dateFormat = new SimpleDateFormat("h:mm a", Locale.US);
-            }
-            else{
+            } else {
                 dateFormat = new SimpleDateFormat("MMM d", Locale.US);
             }
-        }
-        else{
+        } else {
             dateFormat = new SimpleDateFormat("MMM yyyy", Locale.US);
         }
         return dateFormat.format(time);

@@ -1,11 +1,18 @@
 package com.app.sample.fchat.fragment;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +25,9 @@ import com.app.sample.fchat.adapter.ChatsListAdapter;
 import com.app.sample.fchat.data.ParseFirebaseData;
 import com.app.sample.fchat.data.SettingsAPI;
 import com.app.sample.fchat.model.ChatMessage;
+import com.app.sample.fchat.service.NotificationService;
+import com.app.sample.fchat.util.Constants;
+import com.app.sample.fchat.util.CustomToast;
 import com.app.sample.fchat.widget.DividerItemDecoration;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,7 +43,8 @@ public class ChatsFragment extends Fragment {
     public ChatsListAdapter mAdapter;
     private ProgressBar progressBar;
 
-    public static final String MESSAGE_CHILD = "messages";
+    ValueEventListener valueEventListener;
+    DatabaseReference ref;
 
     View view;
 
@@ -60,13 +71,14 @@ public class ChatsFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(MESSAGE_CHILD);
-        ref.addValueEventListener(new ValueEventListener() {
+
+        valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(Constants.LOG_TAG, "Data changed from fragment");
                 if (dataSnapshot.getValue() != null)
-                // TODO: 25-05-2017 if number of items is 0 then show something else
-                mAdapter = new ChatsListAdapter(getContext(), pfbd.getAllLastMessages(dataSnapshot));
+                    // TODO: 25-05-2017 if number of items is 0 then show something else
+                    mAdapter = new ChatsListAdapter(getContext(), pfbd.getAllLastMessages(dataSnapshot));
                 recyclerView.setAdapter(mAdapter);
 
                 mAdapter.setOnItemClickListener(new ChatsListAdapter.OnItemClickListener() {
@@ -85,9 +97,12 @@ public class ChatsFragment extends Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 if (getView() != null)
-                    Snackbar.make(getView(), "Could not connect", Snackbar.LENGTH_LONG).show();
+                    new CustomToast(getContext()).showError("Could not connect");
             }
-        });
+        };
+
+        ref = FirebaseDatabase.getInstance().getReference(Constants.MESSAGE_CHILD);
+        ref.addValueEventListener(valueEventListener);
 
         return view;
     }
@@ -99,5 +114,13 @@ public class ChatsFragment extends Fragment {
         } catch (Exception e) {
         }
 
+    }
+
+    @Override
+    public void onDestroy() {
+        //Remove the listener, otherwise it will continue listening in the background
+        //We have service to run in the background
+        ref.removeEventListener(valueEventListener);
+        super.onDestroy();
     }
 }

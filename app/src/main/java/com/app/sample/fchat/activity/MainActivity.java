@@ -1,5 +1,9 @@
 package com.app.sample.fchat.activity;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,6 +13,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,10 +23,13 @@ import android.widget.Toast;
 import com.app.sample.fchat.R;
 import com.app.sample.fchat.data.Tools;
 import com.app.sample.fchat.fragment.ChatsFragment;
+import com.app.sample.fchat.service.NotificationService;
+import com.app.sample.fchat.util.Constants;
 
 public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     public FloatingActionButton fab;
+    JobScheduler mJobScheduler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +50,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // for system bar in lollipop
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // for system bar in lollipop
             Tools.systemBarLolipop(this);
+            //Create the scheduler
+            mJobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            JobInfo.Builder builder = new JobInfo.Builder(1, new ComponentName(getPackageName(), NotificationService.class.getName()));
+            builder.setPeriodic(900000);
+            //If it needs to continue even after boot, persisted needs to be true
+            //builder.setPersisted(true);
+            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+
+            if (mJobScheduler.schedule(builder.build()) <= 0) {
+                Log.e(Constants.LOG_TAG, "onCreate: Some error while scheduling the job");
+            }
         }
     }
 
@@ -79,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         switch (id) {
             case R.id.action_logout: {
                 Intent logoutIntent = new Intent(this, SplashActivity.class);
-                logoutIntent.putExtra("mode","logout");
+                logoutIntent.putExtra("mode", "logout");
                 startActivity(logoutIntent);
                 finish();
                 return true;
@@ -104,5 +123,4 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         doExitApp();
     }
-
 }

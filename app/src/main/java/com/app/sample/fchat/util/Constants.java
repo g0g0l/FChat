@@ -19,4 +19,8 @@ public class Constants {
     public static final String NODE_NAME = "name";
     public static final String NODE_PHOTO = "photo";
 
+    public static final String LOG_TAG="fchat";
+
+    public static final String MESSAGE_CHILD = "messages";
+
 }

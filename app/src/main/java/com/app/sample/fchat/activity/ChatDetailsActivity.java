@@ -1,5 +1,8 @@
 package com.app.sample.fchat.activity;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -15,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -29,6 +33,8 @@ import com.app.sample.fchat.data.SettingsAPI;
 import com.app.sample.fchat.data.Tools;
 import com.app.sample.fchat.model.ChatMessage;
 import com.app.sample.fchat.model.Friend;
+import com.app.sample.fchat.service.NotificationService;
+import com.app.sample.fchat.util.Constants;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -76,8 +82,8 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
     String chatNode, chatNode_1, chatNode_2;
 
-    public static final String MESSAGE_CHILD = "messages";
     DatabaseReference ref;
+    ValueEventListener valueEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,10 +105,10 @@ public class ChatDetailsActivity extends AppCompatActivity {
         chatNode_1 = set.readSetting("myid") + "-" + friend.getId();
         chatNode_2 = friend.getId() + "-" + set.readSetting("myid");
 
-        ref = FirebaseDatabase.getInstance().getReference(MESSAGE_CHILD);
-        ref.addValueEventListener(new ValueEventListener() {
+        valueEventListener=new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(Constants.LOG_TAG,"Data changed from activity");
                 if (dataSnapshot.hasChild(chatNode_1)) {
                     chatNode = chatNode_1;
                 } else if (dataSnapshot.hasChild(chatNode_2)) {
@@ -121,10 +127,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
                             @NonNull
                             @Override
                             public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                                if (mutableData.getValue() == null)
-                                    mutableData.setValue(true);
-                                else
-                                    mutableData.setValue(true);
+                                mutableData.setValue(true);
                                 return Transaction.success(mutableData);
                             }
 
@@ -136,7 +139,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
                     }
                 }
 
-                // TODO: 12/09/18 Change it to recyclerview 
+                // TODO: 12/09/18 Change it to recyclerview
                 // TODO: 12/09/18 scroll to bottom
                 mAdapter = new ChatDetailsListAdapter(ChatDetailsActivity.this, items);
                 listview.setAdapter(mAdapter);
@@ -150,7 +153,10 @@ public class ChatDetailsActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
                 Snackbar.make(getWindow().getDecorView(), "Could not connect", Snackbar.LENGTH_LONG).show();
             }
-        });
+        };
+
+        ref = FirebaseDatabase.getInstance().getReference(Constants.MESSAGE_CHILD);
+        ref.addValueEventListener(valueEventListener);
 
         // for system bar in lollipop
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -240,5 +246,13 @@ public class ChatDetailsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        //Remove the listener, otherwise it will continue listening in the background
+        //We have service to run in the background
+        ref.removeEventListener(valueEventListener);
+        super.onDestroy();
     }
 }
