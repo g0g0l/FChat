@@ -13,18 +13,16 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.app.sample.fchat.R;
 import com.app.sample.fchat.data.Tools;
 import com.app.sample.fchat.fragment.ChatsFragment;
 import com.app.sample.fchat.service.NotificationService;
-import com.app.sample.fchat.util.Constants;
+import com.app.sample.fchat.util.CustomToast;
 
 public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
@@ -60,10 +58,7 @@ public class MainActivity extends AppCompatActivity {
             //If it needs to continue even after boot, persisted needs to be true
             //builder.setPersisted(true);
             builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-
-            if (mJobScheduler.schedule(builder.build()) <= 0) {
-                Log.e(Constants.LOG_TAG, "onCreate: Some error while scheduling the job");
-            }
+            mJobScheduler.schedule(builder.build());
         }
     }
 
@@ -112,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void doExitApp() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            Toast.makeText(this, R.string.press_again_exit_app, Toast.LENGTH_SHORT).show();
+            new CustomToast(this).showInfo(getString(R.string.press_again_exit_app));
             exitTime = System.currentTimeMillis();
         } else {
             finish();

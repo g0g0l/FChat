@@ -8,8 +8,6 @@ import com.app.sample.fchat.util.Constants;
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static com.app.sample.fchat.util.Constants.NODE_ID;
@@ -37,15 +35,15 @@ public class ParseFirebaseData {
         set = new SettingsAPI(context);
     }
 
-    public List<Friend> getAllUser(DataSnapshot dataSnapshot) {
-        List<Friend> frnds = new ArrayList<>();
+    public ArrayList<Friend> getAllUser(DataSnapshot dataSnapshot) {
+        ArrayList<Friend> frnds = new ArrayList<>();
         String name = null, id = null, photo = null;
         for (DataSnapshot data : dataSnapshot.getChildren()) {
             name = data.child(NODE_NAME).getValue().toString();
             id = data.child(NODE_ID).getValue().toString();
             photo = data.child(NODE_PHOTO).getValue().toString();
 
-            if (!set.readSetting("myid").equals(id))
+            if (!set.readSetting(Constants.PREF_MY_ID).equals(id))
                 frnds.add(new Friend(id, name, photo));
         }
         return frnds;
@@ -72,10 +70,10 @@ public class ParseFirebaseData {
         return chats;
     }
 
-    public List<ChatMessage> getAllLastMessages(DataSnapshot dataSnapshot) {
+    public ArrayList<ChatMessage> getAllLastMessages(DataSnapshot dataSnapshot) {
         // TODO: 11/09/18 Return only last messages of every conversation current user is involved in
-        List<ChatMessage> lastChats = new ArrayList<>();
-        List<ChatMessage> tempMsgList;
+        ArrayList<ChatMessage> lastChats = new ArrayList<>();
+        ArrayList<ChatMessage> tempMsgList;
         long lastTimeStamp;
         String text = null, msgTime = null, senderId = null, senderName = null, senderPhoto = null, receiverId = null, receiverName = null, receiverPhoto = null;
         Boolean read = Boolean.TRUE;
@@ -102,7 +100,7 @@ public class ParseFirebaseData {
             }
 
             for (ChatMessage oneTemp : tempMsgList) {
-                if ((set.readSetting("myid").equals(oneTemp.getReceiver().getId())) || (set.readSetting("myid").equals(oneTemp.getSender().getId()))) {
+                if ((set.readSetting(Constants.PREF_MY_ID).equals(oneTemp.getReceiver().getId())) || (set.readSetting("myid").equals(oneTemp.getSender().getId()))) {
                     if (oneTemp.getTimestamp().equals(String.valueOf(lastTimeStamp))) {
                         lastChats.add(oneTemp);
                     }
@@ -112,9 +110,9 @@ public class ParseFirebaseData {
         return lastChats;
     }
 
-    public List<ChatMessage> getAllUnreadReceivedMessages(DataSnapshot dataSnapshot) {
-        List<ChatMessage> lastChats = new ArrayList<>();
-        List<ChatMessage> tempMsgList;
+    public ArrayList<ChatMessage> getAllUnreadReceivedMessages(DataSnapshot dataSnapshot) {
+        ArrayList<ChatMessage> lastChats = new ArrayList<>();
+        ArrayList<ChatMessage> tempMsgList;
         long lastTimeStamp;
         String text = null, msgTime = null, senderId = null, senderName = null, senderPhoto = null, receiverId = null, receiverName = null, receiverPhoto = null;
         Boolean read = Boolean.TRUE;
@@ -141,7 +139,7 @@ public class ParseFirebaseData {
             }
 
             for (ChatMessage oneTemp : tempMsgList) {
-                if ((set.readSetting("myid").equals(oneTemp.getReceiver().getId()))) {
+                if ((set.readSetting(Constants.PREF_MY_ID).equals(oneTemp.getReceiver().getId()))) {
                     if (oneTemp.getTimestamp().equals(String.valueOf(lastTimeStamp)) && !oneTemp.isRead()) {
                         lastChats.add(oneTemp);
                     }

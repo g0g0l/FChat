@@ -1,14 +1,7 @@
 package com.app.sample.fchat.fragment;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,9 +18,7 @@ import com.app.sample.fchat.adapter.ChatsListAdapter;
 import com.app.sample.fchat.data.ParseFirebaseData;
 import com.app.sample.fchat.data.SettingsAPI;
 import com.app.sample.fchat.model.ChatMessage;
-import com.app.sample.fchat.service.NotificationService;
 import com.app.sample.fchat.util.Constants;
-import com.app.sample.fchat.util.CustomToast;
 import com.app.sample.fchat.widget.DividerItemDecoration;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -84,9 +75,9 @@ public class ChatsFragment extends Fragment {
                 mAdapter.setOnItemClickListener(new ChatsListAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(View v, ChatMessage obj, int position) {
-                        if (obj.getReceiver().getId().equals(set.readSetting("myid")))
+                        if (obj.getReceiver().getId().equals(set.readSetting(Constants.PREF_MY_ID)))
                             ChatDetailsActivity.navigate((MainActivity) getActivity(), v.findViewById(R.id.lyt_parent), obj.getSender());
-                        else if (obj.getSender().getId().equals(set.readSetting("myid")))
+                        else if (obj.getSender().getId().equals(set.readSetting(Constants.PREF_MY_ID)))
                             ChatDetailsActivity.navigate((MainActivity) getActivity(), v.findViewById(R.id.lyt_parent), obj.getReceiver());
                     }
                 });
@@ -96,8 +87,6 @@ public class ChatsFragment extends Fragment {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                if (getView() != null)
-                    new CustomToast(getContext()).showError("Could not connect");
             }
         };
 

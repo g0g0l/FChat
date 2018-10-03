@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import com.app.sample.fchat.R;
 import com.app.sample.fchat.data.SettingsAPI;
 import com.app.sample.fchat.data.Tools;
+import com.app.sample.fchat.util.Constants;
 import com.app.sample.fchat.util.CustomToast;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -103,7 +104,7 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
             }
         }
         if (!mGoogleApiClient.isConnecting()) {
-            if (!set.readSetting("myid").equals("na")) {
+            if (!set.readSetting(Constants.PREF_MY_ID).equals("na")) {
                 signInButton.setVisibility(View.GONE);
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -194,7 +195,7 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
-                customToast.showError("Login failed");
+                customToast.showError(getString(R.string.error_login_failed));
             }
         }
     }
@@ -209,7 +210,7 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            customToast.showError("Authentication failed.");
+                            customToast.showError(getString(R.string.error_authetication_failed));
                         } else {
                             ref = FirebaseDatabase.getInstance().getReference(USERS_CHILD);
                             ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -219,9 +220,9 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
                                     final String usrId = acct.getId();
                                     final String usrDp = acct.getPhotoUrl().toString();
 
-                                    set.addUpdateSettings("myid", usrId);
-                                    set.addUpdateSettings("myname", usrNm);
-                                    set.addUpdateSettings("mydp", usrDp);
+                                    set.addUpdateSettings(Constants.PREF_MY_ID, usrId);
+                                    set.addUpdateSettings(Constants.PREF_MY_NAME, usrNm);
+                                    set.addUpdateSettings(Constants.PREF_MY_DP, usrDp);
 
                                     if (!snapshot.hasChild(usrId)) {
                                         ref.child(usrId + "/" + NODE_NAME).setValue(usrNm);

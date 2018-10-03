@@ -1,15 +1,11 @@
 package com.app.sample.fchat.activity;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
@@ -33,8 +29,8 @@ import com.app.sample.fchat.data.SettingsAPI;
 import com.app.sample.fchat.data.Tools;
 import com.app.sample.fchat.model.ChatMessage;
 import com.app.sample.fchat.model.Friend;
-import com.app.sample.fchat.service.NotificationService;
 import com.app.sample.fchat.util.Constants;
+import com.app.sample.fchat.util.CustomToast;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -102,8 +98,8 @@ public class ChatDetailsActivity extends AppCompatActivity {
         initToolbar();
 
         iniComponen();
-        chatNode_1 = set.readSetting("myid") + "-" + friend.getId();
-        chatNode_2 = friend.getId() + "-" + set.readSetting("myid");
+        chatNode_1 = set.readSetting(Constants.PREF_MY_ID) + "-" + friend.getId();
+        chatNode_2 = friend.getId() + "-" + set.readSetting(Constants.PREF_MY_ID);
 
         valueEventListener=new ValueEventListener() {
             @Override
@@ -122,7 +118,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 //Here we are traversing all the messages and mark all received messages read
 
                 for (DataSnapshot data : dataSnapshot.child(chatNode).getChildren()) {
-                    if (data.child(NODE_RECEIVER_ID).getValue().toString().equals(set.readSetting("myid"))) {
+                    if (data.child(NODE_RECEIVER_ID).getValue().toString().equals(set.readSetting(Constants.PREF_MY_ID))) {
                         data.child(NODE_IS_READ).getRef().runTransaction(new Transaction.Handler() {
                             @NonNull
                             @Override
@@ -140,18 +136,15 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 }
 
                 // TODO: 12/09/18 Change it to recyclerview
-                // TODO: 12/09/18 scroll to bottom
                 mAdapter = new ChatDetailsListAdapter(ChatDetailsActivity.this, items);
                 listview.setAdapter(mAdapter);
-                listview.setSelectionFromTop(mAdapter.getCount(), 0);
                 listview.requestFocus();
                 registerForContextMenu(listview);
-                bindView();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Snackbar.make(getWindow().getDecorView(), "Could not connect", Snackbar.LENGTH_LONG).show();
+                new CustomToast(ChatDetailsActivity.this).showError(getString(R.string.error_could_not_connect));
             }
         };
 
@@ -173,15 +166,6 @@ public class ChatDetailsActivity extends AppCompatActivity {
         actionBar.setTitle(friend.getName());
     }
 
-    public void bindView() {
-        try {
-            mAdapter.notifyDataSetChanged();
-            listview.setSelectionFromTop(mAdapter.getCount(), 0);
-        } catch (Exception e) {
-
-        }
-    }
-
     public void iniComponen() {
         listview = (ListView) findViewById(R.id.listview);
         btn_send = (Button) findViewById(R.id.btn_send);
@@ -197,9 +181,9 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 hm.put(NODE_RECEIVER_ID, friend.getId());
                 hm.put(NODE_RECEIVER_NAME, friend.getName());
                 hm.put(NODE_RECEIVER_PHOTO, friend.getPhoto());
-                hm.put(NODE_SENDER_ID, set.readSetting("myid"));
-                hm.put(NODE_SENDER_NAME, set.readSetting("myname"));
-                hm.put(NODE_SENDER_PHOTO, set.readSetting("mydp"));
+                hm.put(NODE_SENDER_ID, set.readSetting(Constants.PREF_MY_ID));
+                hm.put(NODE_SENDER_NAME, set.readSetting(Constants.PREF_MY_NAME));
+                hm.put(NODE_SENDER_PHOTO, set.readSetting(Constants.PREF_MY_DP));
                 hm.put(NODE_IS_READ, false);
 
                 ref.child(chatNode).push().setValue(hm);
@@ -209,7 +193,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
         });
         et_content.addTextChangedListener(contentWatcher);
         if (et_content.length() == 0) {
-            btn_send.setEnabled(false);
+            btn_send.setVisibility(View.GONE);
         }
         hideKeyboard();
     }
@@ -227,9 +211,9 @@ public class ChatDetailsActivity extends AppCompatActivity {
         @Override
         public void afterTextChanged(Editable etd) {
             if (etd.toString().trim().length() == 0) {
-                btn_send.setEnabled(false);
+                btn_send.setVisibility(View.GONE);
             } else {
-                btn_send.setEnabled(true);
+                btn_send.setVisibility(View.VISIBLE);
             }
             //draft.setContent(etd.toString());
         }

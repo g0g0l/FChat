@@ -23,4 +23,8 @@ public class Constants {
 
     public static final String MESSAGE_CHILD = "messages";
 
+    public static final String PREF_MY_ID = "myid";
+    public static final String PREF_MY_NAME = "myname";
+    public static final String PREF_MY_DP = "mydp";
+
 }

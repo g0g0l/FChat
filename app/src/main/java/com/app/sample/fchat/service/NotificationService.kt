@@ -1,12 +1,18 @@
 package com.app.sample.fchat.service
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.job.JobParameters
 import android.app.job.JobService
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.app.sample.fchat.R
+import com.app.sample.fchat.activity.MainActivity
 import com.app.sample.fchat.data.ParseFirebaseData
 import com.app.sample.fchat.model.ChatMessage
 import com.app.sample.fchat.util.Constants
@@ -14,12 +20,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import android.app.NotificationManager
-import android.app.NotificationChannel
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import com.app.sample.fchat.activity.MainActivity
 
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -56,10 +56,8 @@ class NotificationService : JobService() {
     fun showNotification(title: String, content: String) {
         val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            val channel = NotificationChannel("default",
-                    "YOUR_CHANNEL_NAME",
-                    NotificationManager.IMPORTANCE_DEFAULT)
-            channel.description = "YOUR_NOTIFICATION_CHANNEL_DISCRIPTION"
+            val channel = NotificationChannel("default", "Fchat-Message", NotificationManager.IMPORTANCE_DEFAULT)
+            channel.description = "New message notification for fchat"
             mNotificationManager.createNotificationChannel(channel)
         }
         val mBuilder = NotificationCompat.Builder(applicationContext, "default")

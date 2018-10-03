@@ -2,7 +2,6 @@ package com.app.sample.fchat.activity;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +14,7 @@ import com.app.sample.fchat.adapter.FriendsListAdapter;
 import com.app.sample.fchat.data.ParseFirebaseData;
 import com.app.sample.fchat.data.Tools;
 import com.app.sample.fchat.model.Friend;
+import com.app.sample.fchat.util.CustomToast;
 import com.app.sample.fchat.widget.DividerItemDecoration;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,13 +35,13 @@ public class SelectFriendActivity extends AppCompatActivity {
     public static final String USERS_CHILD = "users";
     ParseFirebaseData pfbd;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_new_chat);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_new_chat);
         initToolbar();
         initComponent();
-        friendList=new ArrayList<>();
+        friendList = new ArrayList<>();
         pfbd = new ParseFirebaseData(this);
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(USERS_CHILD);
@@ -64,7 +64,7 @@ public class SelectFriendActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                    Snackbar.make(getWindow().getDecorView(), "Could not connect", Snackbar.LENGTH_LONG).show();
+                new CustomToast(SelectFriendActivity.this).showError(getString(R.string.error_could_not_connect));
             }
         });
 
@@ -76,15 +76,15 @@ public class SelectFriendActivity extends AppCompatActivity {
 
     private void initComponent() {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        
+
         // use a linear layout manager
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
-		recyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
     }
 
-    public void initToolbar(){
+    public void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
