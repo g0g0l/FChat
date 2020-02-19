@@ -2,8 +2,6 @@ package com.app.sample.fchat.adapter
 
 import android.content.Context
 import android.graphics.Color
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.CardView
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +10,8 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import com.app.sample.fchat.R
 import com.app.sample.fchat.data.SettingsAPI
 import com.app.sample.fchat.model.ChatMessage

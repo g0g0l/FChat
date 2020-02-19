@@ -8,9 +8,9 @@ import android.app.job.JobService
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.support.annotation.RequiresApi
-import android.support.v4.app.NotificationCompat
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import com.app.sample.fchat.R
 import com.app.sample.fchat.activity.MainActivity
 import com.app.sample.fchat.data.ParseFirebaseData

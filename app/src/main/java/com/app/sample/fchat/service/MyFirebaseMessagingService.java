@@ -17,12 +17,18 @@ package com.app.sample.fchat.service;
 
 import android.util.Log;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import androidx.annotation.NonNull;
 
 import static com.app.sample.fchat.util.Constants.LOG_TAG;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
+
+    private static final String FRIENDLY_ENGAGE_TOPIC = "friendly_engage";
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -30,5 +36,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(LOG_TAG, "FCM Message Id: " + remoteMessage.getMessageId());
         Log.d(LOG_TAG, "FCM Notification Message: " + remoteMessage.getNotification());
         Log.d(LOG_TAG, "FCM Data Message: " + remoteMessage.getData());
+    }
+
+    @Override
+    public void onNewToken(@NonNull String s) {
+        super.onNewToken(s);
+        String token = FirebaseInstanceId.getInstance().getToken();
+
+        // Once a token is generated, we subscribe to topic.
+        FirebaseMessaging.getInstance().subscribeToTopic(FRIENDLY_ENGAGE_TOPIC);
     }
 }

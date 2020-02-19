@@ -17,7 +17,7 @@ package com.app.sample.fchat.model
 
 import com.app.sample.fchat.data.Tools
 
-class ChatMessage(var text: String?, var timestamp: String?, var friendId: String?, var friendName: String?, var friendPhoto: String?, var senderId: String?, var senderName: String?, var senderPhoto: String?, var isRead: Boolean?) {
+class ChatMessage(var text: String?, var timestamp: String, var friendId: String?, var friendName: String?, var friendPhoto: String?, var senderId: String?, var senderName: String?, var senderPhoto: String?, var isRead: Boolean?) {
 
     val readableTime: String?
         get() {

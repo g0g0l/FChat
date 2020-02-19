@@ -2,10 +2,6 @@ package com.app.sample.fchat.data;
 
 import android.app.Activity;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -14,6 +10,8 @@ import com.app.sample.fchat.R;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
+import androidx.annotation.RequiresApi;
 
 
 public class Tools {
