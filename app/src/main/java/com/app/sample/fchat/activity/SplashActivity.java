@@ -12,9 +12,10 @@ import android.widget.ProgressBar;
 
 import com.app.sample.fchat.R;
 import com.app.sample.fchat.data.SettingsAPI;
-import com.app.sample.fchat.data.Tools;
+import com.app.sample.fchat.ui.CustomToast;
+import com.app.sample.fchat.ui.ViewHelper;
 import com.app.sample.fchat.util.Constants;
-import com.app.sample.fchat.util.CustomToast;
+import com.app.sample.fchat.util.Tools;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -31,15 +32,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import static com.app.sample.fchat.util.Constants.NODE_ID;
 import static com.app.sample.fchat.util.Constants.NODE_NAME;
 import static com.app.sample.fchat.util.Constants.NODE_PHOTO;
+import static com.app.sample.fchat.util.Constants.NODE_USER_ID;
 
-public class SplashActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class SplashActivity extends AppCompatActivity
+    implements GoogleApiClient.OnConnectionFailedListener {
 
     private static final int RC_SIGN_IN = 100;
     private SignInButton signInButton;
@@ -51,6 +55,7 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
     SettingsAPI set;
 
     CustomToast customToast;
+    ViewHelper viewHelper;
 
     public static final String USERS_CHILD = "users";
 
@@ -61,6 +66,8 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
         bindLogo();
 
         customToast = new CustomToast(this);
+        viewHelper = new ViewHelper(getApplicationContext());
+        viewHelper.clearNotofication();
 
         // Assign fields
         signInButton = (SignInButton) findViewById(R.id.sign_in_button);
@@ -86,7 +93,9 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
                 mGoogleApiClient
                     .registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                         @Override
-                        public void onConnected(@Nullable Bundle bundle) {
+                        public void onConnected(
+                            @Nullable
+                                Bundle bundle) {
                             mFirebaseAuth.signOut();
                             Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                             set.deleteAllSettings();
@@ -184,42 +193,43 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
 
     private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mFirebaseAuth.signInWithCredential(credential)
-            .addOnCompleteListener(this, task -> {
-                // If sign in fails, display a message to the user. If sign in succeeds
-                // the auth state listener will be notified and logic to handle the
-                // signed in user can be handled in the listener.
-                if (!task.isSuccessful()) {
-                    customToast.showError(getString(R.string.error_authetication_failed));
-                } else {
-                    ref = FirebaseDatabase.getInstance().getReference(USERS_CHILD);
-                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot snapshot) {
-                            final String usrNm = acct.getDisplayName();
-                            final String usrId = acct.getId();
-                            final String usrDp = acct.getPhotoUrl().toString();
+        mFirebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, task -> {
+            // If sign in fails, display a message to the user. If sign in succeeds
+            // the auth state listener will be notified and logic to handle the
+            // signed in user can be handled in the listener.
+            if (!task.isSuccessful()) {
+                customToast.showError(getString(R.string.error_authetication_failed));
+            } else {
+                ref = FirebaseDatabase.getInstance().getReference(USERS_CHILD);
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(
+                        @NotNull
+                            DataSnapshot snapshot) {
+                        final String usrNm = acct.getDisplayName();
+                        final String usrId = acct.getId();
+                        final String usrDp = acct.getPhotoUrl().toString();
 
-                            set.addUpdateSettings(Constants.PREF_MY_ID, usrId);
-                            set.addUpdateSettings(Constants.PREF_MY_NAME, usrNm);
-                            set.addUpdateSettings(Constants.PREF_MY_DP, usrDp);
+                        set.addUpdateSettings(Constants.PREF_MY_ID, usrId);
+                        set.addUpdateSettings(Constants.PREF_MY_NAME, usrNm);
+                        set.addUpdateSettings(Constants.PREF_MY_DP, usrDp);
 
-                            if (!snapshot.hasChild(usrId)) {
-                                ref.child(usrId + "/" + NODE_NAME).setValue(usrNm);
-                                ref.child(usrId + "/" + NODE_PHOTO).setValue(usrDp);
-                                ref.child(usrId + "/" + NODE_ID).setValue(usrId);
-                            }
+                        if (!snapshot.hasChild(usrId)) {
+                            ref.child(usrId + "/" + NODE_NAME).setValue(usrNm);
+                            ref.child(usrId + "/" + NODE_PHOTO).setValue(usrDp);
+                            ref.child(usrId + "/" + NODE_USER_ID).setValue(usrId);
                         }
+                    }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                        }
-                    });
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
 
-                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                    finish();
-                }
-            });
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                finish();
+            }
+        });
     }
 
     @Override

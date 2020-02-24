@@ -1,4 +1,4 @@
-package com.app.sample.fchat.util
+package com.app.sample.fchat.ui
 
 import android.content.Context
 import android.view.Gravity

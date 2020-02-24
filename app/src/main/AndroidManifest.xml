@@ -23,11 +23,13 @@
             android:name=".service.NotificationService"
             android:label="Poll Messages"
             android:permission="android.permission.BIND_JOB_SERVICE"
+            android:enabled="true"
             android:exported="true">
 
         </service>
         <service
             android:name=".service.MyFirebaseMessagingService"
+            android:enabled="true"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -48,11 +50,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.app.sample.fchat.activity.ChatDetailsActivity"
+            android:name="com.app.sample.fchat.activity.ChatActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:label="List" >
         </activity>
         <activity
             android:name="com.app.sample.fchat.activity.SelectFriendActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:label="Select Friend" >
         </activity>
     </application>

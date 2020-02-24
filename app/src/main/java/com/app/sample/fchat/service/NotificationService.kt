@@ -29,16 +29,18 @@ Created by bibaswann on 26/09/18.
 
 
 class NotificationService : JobService() {
-    //Todo: scheduler stops on force exit of app or reboot
+
+    var mNotificationManager: NotificationManager? = null
+
+    //Todo: do something about multiple notification.
     override fun onStartJob(params: JobParameters?): Boolean {
         val ref = FirebaseDatabase.getInstance().getReference(Constants.MESSAGE_CHILD)
-        val parseFirebaseData: ParseFirebaseData = ParseFirebaseData(this)
         ref.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(p0: DataSnapshot) {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
                 Log.d(Constants.LOG_TAG, "Data changed from service")
-                for (oneChat: ChatMessage in parseFirebaseData.getAllUnreadReceivedMessages(p0)) {
+                for (oneChat: ChatMessage in ParseFirebaseData(this@NotificationService).getAllUnreadReceivedMessages(dataSnapshot)) {
 //                    Log.e(Constants.LOG_TAG, oneChat.text + "\n")
-                   showNotification(oneChat.senderName.toString(),oneChat.text.toString())
+                    showNotification(oneChat.senderName.toString(), oneChat.text.toString())
                 }
             }
 
@@ -54,21 +56,26 @@ class NotificationService : JobService() {
     }
 
     fun showNotification(title: String, content: String) {
-        val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        //Todo: notification grouping
+        mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel("default", "Fchat-Message", NotificationManager.IMPORTANCE_DEFAULT)
             channel.description = "New message notification for fchat"
-            mNotificationManager.createNotificationChannel(channel)
+            mNotificationManager!!.createNotificationChannel(channel)
         }
         val mBuilder = NotificationCompat.Builder(applicationContext, "default")
-                .setSmallIcon(R.mipmap.ic_launcher) // notification icon
+                .setSmallIcon(R.drawable.ic_logo_white) // notification icon
                 .setContentTitle(title) // title for notification
                 .setContentText(content)// message for notification
                 .setAutoCancel(true) // clear notification after click
         val intent = Intent(applicationContext, MainActivity::class.java)
         val pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         mBuilder.setContentIntent(pi)
-        mNotificationManager.notify(0, mBuilder.build())
+        mNotificationManager!!.notify(0, mBuilder.build())
+    }
+
+    fun clearNotification() {
+        mNotificationManager!!.cancelAll()
     }
 
 }

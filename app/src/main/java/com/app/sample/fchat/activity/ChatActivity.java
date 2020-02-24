@@ -18,11 +18,11 @@ import com.app.sample.fchat.R;
 import com.app.sample.fchat.adapter.ChatDetailsListAdapter;
 import com.app.sample.fchat.data.ParseFirebaseData;
 import com.app.sample.fchat.data.SettingsAPI;
-import com.app.sample.fchat.data.Tools;
 import com.app.sample.fchat.model.ChatMessage;
 import com.app.sample.fchat.model.Friend;
+import com.app.sample.fchat.ui.CustomToast;
 import com.app.sample.fchat.util.Constants;
-import com.app.sample.fchat.util.CustomToast;
+import com.app.sample.fchat.util.Tools;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,22 +44,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.view.ViewCompat;
 
-import static com.app.sample.fchat.util.Constants.NODE_IS_READ;
-import static com.app.sample.fchat.util.Constants.NODE_RECEIVER_ID;
-import static com.app.sample.fchat.util.Constants.NODE_RECEIVER_NAME;
-import static com.app.sample.fchat.util.Constants.NODE_RECEIVER_PHOTO;
-import static com.app.sample.fchat.util.Constants.NODE_SENDER_ID;
-import static com.app.sample.fchat.util.Constants.NODE_SENDER_NAME;
-import static com.app.sample.fchat.util.Constants.NODE_SENDER_PHOTO;
-import static com.app.sample.fchat.util.Constants.NODE_TEXT;
-import static com.app.sample.fchat.util.Constants.NODE_TIMESTAMP;
-
-public class ChatDetailsActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity {
     public static String KEY_FRIEND = "FRIEND";
 
     // give preparation animation activity transition
     public static void navigate(AppCompatActivity activity, View transitionImage, Friend obj) {
-        Intent intent = new Intent(activity, ChatDetailsActivity.class);
+        Intent intent = new Intent(activity, ChatActivity.class);
         intent.putExtra(KEY_FRIEND, obj);
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, transitionImage, KEY_FRIEND);
         ActivityCompat.startActivity(activity, intent, options.toBundle());
@@ -85,7 +75,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_details);
+        setContentView(R.layout.activity_chat);
         parent_view = findViewById(android.R.id.content);
         pfbd = new ParseFirebaseData(this);
         set = new SettingsAPI(this);
@@ -119,8 +109,8 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 //Here we are traversing all the messages and mark all received messages read
 
                 for (DataSnapshot data : dataSnapshot.child(chatNode).getChildren()) {
-                    if (data.child(NODE_RECEIVER_ID).getValue().toString().equals(set.readSetting(Constants.PREF_MY_ID))) {
-                        data.child(NODE_IS_READ).getRef().runTransaction(new Transaction.Handler() {
+                    if (data.child(Constants.NODE_RECEIVER_ID).getValue().toString().equals(set.readSetting(Constants.PREF_MY_ID))) {
+                        data.child(Constants.NODE_IS_READ).getRef().runTransaction(new Transaction.Handler() {
                             @NonNull
                             @Override
                             public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
@@ -137,7 +127,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 }
 
                 // TODO: 12/09/18 Change it to recyclerview
-                mAdapter = new ChatDetailsListAdapter(ChatDetailsActivity.this, items);
+                mAdapter = new ChatDetailsListAdapter(ChatActivity.this, items);
                 listview.setAdapter(mAdapter);
                 listview.requestFocus();
                 registerForContextMenu(listview);
@@ -145,7 +135,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                new CustomToast(ChatDetailsActivity.this).showError(getString(R.string.error_could_not_connect));
+                new CustomToast(ChatActivity.this).showError(getString(R.string.error_could_not_connect));
             }
         };
 
@@ -177,15 +167,15 @@ public class ChatDetailsActivity extends AppCompatActivity {
 //                ChatMessage im=new ChatMessage(et_content.getText().toString(), String.valueOf(System.currentTimeMillis()),friend.getId(),friend.getName(),friend.getPhoto());
 
                 HashMap hm = new HashMap();
-                hm.put(NODE_TEXT, et_content.getText().toString());
-                hm.put(NODE_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
-                hm.put(NODE_RECEIVER_ID, friend.getId());
-                hm.put(NODE_RECEIVER_NAME, friend.getName());
-                hm.put(NODE_RECEIVER_PHOTO, friend.getPhoto());
-                hm.put(NODE_SENDER_ID, set.readSetting(Constants.PREF_MY_ID));
-                hm.put(NODE_SENDER_NAME, set.readSetting(Constants.PREF_MY_NAME));
-                hm.put(NODE_SENDER_PHOTO, set.readSetting(Constants.PREF_MY_DP));
-                hm.put(NODE_IS_READ, false);
+                hm.put(Constants.NODE_TEXT, et_content.getText().toString());
+                hm.put(Constants.NODE_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
+                hm.put(Constants.NODE_RECEIVER_ID, friend.getId());
+                hm.put(Constants.NODE_RECEIVER_NAME, friend.getName());
+                hm.put(Constants.NODE_RECEIVER_PHOTO, friend.getPhoto());
+                hm.put(Constants.NODE_SENDER_ID, set.readSetting(Constants.PREF_MY_ID));
+                hm.put(Constants.NODE_SENDER_NAME, set.readSetting(Constants.PREF_MY_NAME));
+                hm.put(Constants.NODE_SENDER_PHOTO, set.readSetting(Constants.PREF_MY_DP));
+                hm.put(Constants.NODE_IS_READ, false);
 
                 ref.child(chatNode).push().setValue(hm);
                 et_content.setText("");

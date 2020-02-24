@@ -10,13 +10,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.app.sample.fchat.R;
-import com.app.sample.fchat.data.Tools;
-import com.app.sample.fchat.fragment.ChatsFragment;
+import com.app.sample.fchat.fragment.ConversationListFragment;
 import com.app.sample.fchat.service.NotificationService;
-import com.app.sample.fchat.util.CustomToast;
+import com.app.sample.fchat.ui.CustomToast;
+import com.app.sample.fchat.util.Constants;
+import com.app.sample.fchat.util.Tools;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.appcompat.app.ActionBar;
@@ -41,12 +41,9 @@ public class MainActivity extends AppCompatActivity {
         prepareActionBar(toolbar);
         initComponent();
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this, SelectFriendActivity.class);
-                startActivity(i);
-            }
+        fab.setOnClickListener(view -> {
+            Intent i = new Intent(MainActivity.this, SelectFriendActivity.class);
+            startActivity(i);
         });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -66,9 +63,9 @@ public class MainActivity extends AppCompatActivity {
     private void initComponent() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        ChatsFragment ctf = new ChatsFragment();
+        ConversationListFragment ctf = new ConversationListFragment();
         //icf.setRetainInstance(true);
-        fragmentTransaction.add(R.id.main_container, ctf, "Chat History");
+        fragmentTransaction.add(R.id.main_container, ctf, Constants.TAG_CHAT_HISTORY);
         fragmentTransaction.commit();
 
     }
